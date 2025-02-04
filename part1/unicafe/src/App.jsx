@@ -36,6 +36,18 @@ const Positive = (props) => {
   )
 }
 
+const Statistics = (props) => {
+  const average = props.puntuation / props.total
+  const positive = props.good / props.total * 100
+  return (
+    <div>
+      <p>all {props.total}</p>
+      <p>average {average}</p>
+      <p>positive {positive} %</p>
+    </div>
+  )
+
+}
 const App = () => {
   // guarda los clics de cada botón en su propio estado
   const [good, setGood] = useState(0)
@@ -67,9 +79,7 @@ const App = () => {
       <Display text="good" counter={good}/>
       <Display text="neutral" counter={neutral}/>
       <Display text="bad" counter={bad}/>
-      <Display text="all" counter={total}/>
-      <Average puntuation={puntuation} total={total}/>
-      <Positive good={good} total={total}/>
+      <Statistics total={total} puntuation={puntuation} good={good}/>
     </div>
   )
 }
