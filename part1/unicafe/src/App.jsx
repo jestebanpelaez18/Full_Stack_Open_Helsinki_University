@@ -1,5 +1,11 @@
 import { useState } from 'react'
 
+const getTotalReview = (review) => review.good + review.neutral + review.bad;
+
+const getAveragelReview = (review) => (review.good - review.bad) / getTotalReview(review);
+
+const getPositiveReview = (review) => review.good / getTotalReview(review) * 100;
+
 const StatisticsLine = (props) => {
  
   if(props.text==="positive")
@@ -32,22 +38,21 @@ const Header = (props) => {
 }
 
 
-const Statistics = (props) => {
-  const average = props.puntuation / props.total
-  const positive = props.good / props.total * 100
+const Statistics = ({review}) => {
   
-  if(props.total === 0)
+  console.log(review.neutral)
+  if(getTotalReview(review) === 0)
     return(
       <p>No feedback given</p>
     )
   return (
     <div>
-      <StatisticsLine text="good" statistic={props.good}/>
-      <StatisticsLine text="neutral" statistic={props.neutral}/>
-      <StatisticsLine text="bad" statistic={props.bad}/>
-      <StatisticsLine text="all" statistic={props.total}/>
-      <StatisticsLine text="average" statistic={average}/>
-      <StatisticsLine text="positive" statistic={positive}/>
+      <StatisticsLine text="good" statistic={review.good}/>
+      <StatisticsLine text="neutral" statistic={review.neutral}/>
+      <StatisticsLine text="bad" statistic={review.bad}/>
+      <StatisticsLine text="all" statistic={getTotalReview(review)}/>
+      <StatisticsLine text="average" statistic={getAveragelReview(review)}/>
+      <StatisticsLine text="positive" statistic={getPositiveReview(review)}/>
     </div>
   )
 
@@ -57,22 +62,18 @@ const App = () => {
   const [good, setGood] = useState(0)
   const [neutral, setNeutral] = useState(0)
   const [bad, setBad] = useState(0)
-  const [total,setTotal] = useState(0)
-  const [puntuation,setPuntuation] = useState(0)
+  const review = {good: good,
+  neutral: neutral,
+  bad: bad};
   
   const HandleGood = () => {
-    setGood(good + 1)
-    setTotal(total + 1)
-    setPuntuation(puntuation + 1)}
+    setGood(good + 1)}
   const HandleNeutral = () => {
-    setNeutral(neutral + 1)
-    setTotal(total + 1)}
+    setNeutral(neutral + 1)}
   const HandleBad = () => {
-    setBad(bad + 1)
-    setTotal(total + 1)
-    setPuntuation(puntuation - 1)}
-  
+    setBad(bad + 1)}
 
+  console.log(review) 
   return (
     <div>
       <Header text="give feedback"></Header>
@@ -80,7 +81,7 @@ const App = () => {
       <Button onClick={HandleNeutral} text='neutral'/>
       <Button onClick={HandleBad} text='bad'/>
       <Header text="statistics"></Header>
-      <Statistics total={total} puntuation={puntuation} good={good} bad={bad} neutral={neutral}/>
+      <Statistics review={review}/>
     </div>
   )
 }
