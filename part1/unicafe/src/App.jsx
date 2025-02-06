@@ -1,11 +1,5 @@
 import { useState } from 'react'
 
-const Display = (props) => {
-  return (
-      <p>{props.text} {props.counter}</p>
-  )
-}
-
 const Button = (props) => {
   return(
     <button onClick={props.onClick}>
@@ -22,25 +16,20 @@ const Header = (props) => {
   )
 }
 
-const Average = (props) => {
-  const average = props.puntuation / props.total
-  return (
-    <p>average {average}</p>
-  )
-}
-
-const Positive = (props) => {
-  const positive = props.good / props.total * 100
-  return (
-    <p>positive {positive} %</p>
-  )
-}
 
 const Statistics = (props) => {
   const average = props.puntuation / props.total
   const positive = props.good / props.total * 100
+  
+  if(props.total === 0)
+    return(
+      <p>No feedback given</p>
+    )
   return (
     <div>
+      <p>good {props.good}</p>
+      <p>neutral {props.neutral}</p>
+      <p>bad {props.bad}</p>
       <p>all {props.total}</p>
       <p>average {average}</p>
       <p>positive {positive} %</p>
@@ -76,10 +65,7 @@ const App = () => {
       <Button onClick={HandleNeutral} text='neutral'/>
       <Button onClick={HandleBad} text='bad'/>
       <Header text="statistics"></Header>
-      <Display text="good" counter={good}/>
-      <Display text="neutral" counter={neutral}/>
-      <Display text="bad" counter={bad}/>
-      <Statistics total={total} puntuation={puntuation} good={good}/>
+      <Statistics total={total} puntuation={puntuation} good={good} bad={bad} neutral={neutral}/>
     </div>
   )
 }
