@@ -10,14 +10,16 @@ const StatisticsLine = (props) => {
  
   if(props.text==="positive")
     return (
-    <div>
-      <p>{props.text} {props.statistic} %</p>
-    </div>
+    <tr>
+      <td>{props.text} </td>
+      <td>{props.statistic} %</td>
+    </tr>
     )
   return (
-    <div>
-      <p>{props.text} {props.statistic}</p>
-    </div>
+    <tr>
+      <td>{props.text} </td>
+      <td>{props.statistic}</td>
+    </tr>
   )
 }
 
@@ -40,20 +42,21 @@ const Header = (props) => {
 
 const Statistics = ({review}) => {
   
-  console.log(review.neutral)
   if(getTotalReview(review) === 0)
     return(
       <p>No feedback given</p>
     )
   return (
-    <div>
+    <table>
+      <tbody>
       <StatisticsLine text="good" statistic={review.good}/>
       <StatisticsLine text="neutral" statistic={review.neutral}/>
       <StatisticsLine text="bad" statistic={review.bad}/>
       <StatisticsLine text="all" statistic={getTotalReview(review)}/>
       <StatisticsLine text="average" statistic={getAveragelReview(review)}/>
       <StatisticsLine text="positive" statistic={getPositiveReview(review)}/>
-    </div>
+      </tbody>
+    </table>
   )
 
 }
@@ -72,8 +75,7 @@ const App = () => {
     setNeutral(neutral + 1)}
   const HandleBad = () => {
     setBad(bad + 1)}
-
-  console.log(review) 
+ 
   return (
     <div>
       <Header text="give feedback"></Header>
