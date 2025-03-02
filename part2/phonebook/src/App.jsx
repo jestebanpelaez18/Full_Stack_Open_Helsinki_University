@@ -3,19 +3,27 @@ import Numbers from './components/Numbers'
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas' }
+    { name: 'Arto Hellas',
+      id:0 }
   ]) 
   const [newName, setNewName] = useState('')
 
   const addName = (event) => {
     event.preventDefault()
-    console.log('button clicked', event.target)
-    const nameObjet = {
-      name: newName,
-      id: String(persons.length + 1)
+    const existingcontacts = persons.find(person => person.name == newName)
+    if(existingcontacts)
+    {
+      alert(`${newName} is already added to phonebook`)
     }
-    setPersons(persons.concat(nameObjet))
-    setNewName('')
+    else
+    {
+      const nameObjet = {
+        name: newName,
+        id: String(persons.length + 1)
+      }
+      setPersons(persons.concat(nameObjet))
+      setNewName('')
+    }
   }
 
   const handleNameChange = (event) => {
