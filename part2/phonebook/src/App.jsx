@@ -1,5 +1,7 @@
 import { useState } from "react";
-import Numbers from "./components/Numbers";
+import Persons from "./components/Persons";
+import Filter from "./components/Filter";
+import PersonForm from "./components/PersonForm";
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -11,7 +13,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchItem, setSearchItem] = useState("");
-  const [Filter, setNewFilter] = useState(persons);
+  const [filtering, setNewFilter] = useState(persons);
 
   const addNumbers = (event) => {
     event.preventDefault();
@@ -32,7 +34,7 @@ const App = () => {
         id: String(persons.length + 1),
       };
       setPersons(persons.concat(nameObjet));
-      setNewFilter(Filter.concat(nameObjet));
+      setNewFilter(filtering.concat(nameObjet));
       setNewName("");
       setNewNumber("");
     }
@@ -59,28 +61,17 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <form>
-        <div>
-          filter shown with:{" "}
-          <input value={searchItem} onChange={handleFiltering} />
-        </div>
-      </form>
-      <h2>add a new</h2>
-      <form onSubmit={addNumbers}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange} />
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={handleNumberChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      {Filter.map((person) => (
-        <Numbers key={person.id} number={person}></Numbers>
-      ))}
+      <Filter handle={handleFiltering} item={searchItem}></Filter>
+      <h3>add a new</h3>
+      <PersonForm
+        addButton={addNumbers}
+        name={newName}
+        handleName={handleNameChange}
+        number={newNumber}
+        handleNumber={handleNumberChange}
+      ></PersonForm>
+      <h3>Numbers</h3>
+      <Persons ListofPersons={filtering}></Persons>
     </div>
   );
 };
