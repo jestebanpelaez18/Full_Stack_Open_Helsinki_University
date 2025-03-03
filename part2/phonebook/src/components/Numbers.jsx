@@ -1,6 +1,6 @@
 const Numbers = ({number}) =>{
     return (
-        <p>{number.name}</p>
+        <p>{number.name} {number.number}</p>
     )
 }
 
