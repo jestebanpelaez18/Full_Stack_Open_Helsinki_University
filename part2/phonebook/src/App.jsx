@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import Persons from "./components/Persons";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
+import phoneService from "./services/Phone";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -12,13 +12,11 @@ const App = () => {
   const [filtering, setNewFilter] = useState([]);
 
   useEffect(() => {
-    console.log("efect");
-    axios.get("http://localhost:3001/persons").then((response) => {
-      console.log("promised fullfilled");
-      setPersons(response.data)
-      setNewFilter(response.data)
+    phoneService.getAll().then(currentNumbers => {
+      setPersons(currentNumbers);
+      setNewFilter(currentNumbers);
     });
-  },[]);
+  }, []);
 
   const addNumbers = (event) => {
     event.preventDefault();
@@ -36,12 +34,34 @@ const App = () => {
       const nameObjet = {
         name: newName,
         number: newNumber,
-        id: String(persons.length + 1),
       };
-      setPersons(persons.concat(nameObjet));
-      setNewFilter(filtering.concat(nameObjet));
-      setNewName("");
-      setNewNumber("");
+      phoneService
+        .postNumber(nameObjet)
+        .then((returnedContact) => {
+          setPersons(persons.concat(returnedContact));
+          setNewFilter(filtering.concat(returnedContact));
+          setNewName("");
+          setNewNumber("");
+        })
+        .catch((error) => {
+          alert("Fail during the post");
+        });
+    }
+  };
+
+  const deleteNumbers = (id) => {
+    const person = persons.find((p) => p.id === id);
+    if (window.confirm(`Delete '${person.name}'`)) {
+      phoneService
+        .deleteNumber(id)
+        .then((deletedContact) => {
+          const updatenumbers = persons.filter((person) => person.id !== deletedContact.id);
+          setPersons(updatenumbers);
+          setNewFilter(updatenumbers);
+        })
+        .catch((error) => {
+          alert("Fail during deleting");
+        });
     }
   };
 
@@ -76,7 +96,7 @@ const App = () => {
         handleNumber={handleNumberChange}
       ></PersonForm>
       <h3>Numbers</h3>
-      <Persons ListofPersons={filtering}></Persons>
+      <Persons ListofPersons={filtering} deleteButton={deleteNumbers}></Persons>
     </div>
   );
 };
