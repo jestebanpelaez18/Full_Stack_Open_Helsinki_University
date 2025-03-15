@@ -12,7 +12,7 @@ const App = () => {
   const [filtering, setNewFilter] = useState([]);
 
   useEffect(() => {
-    phoneService.getAll().then(currentNumbers => {
+    phoneService.getAll().then((currentNumbers) => {
       setPersons(currentNumbers);
       setNewFilter(currentNumbers);
     });
@@ -26,7 +26,29 @@ const App = () => {
     );
     if (existingcontacts) {
       if (existingcontacts) {
-        alert(`${newName} is already added to phonebook`);
+        if (
+          window.confirm(
+            `${newName} is already added to phonebook, replace the old number with a new one ?`
+          )
+        ) {
+          const updatedContact = { ...existingcontacts, number: newNumber };
+          phoneService
+            .updateNumber(existingcontacts.id, updatedContact)
+            .then((returnedNumber) => {
+              setPersons(
+                persons.map((person) =>
+                  person.id !== existingcontacts.id ? person : returnedNumber
+                )
+              );
+              setNewFilter(
+                persons.map((person) =>
+                  person.id !== existingcontacts.id ? person : returnedNumber
+                )
+              );
+              setNewName("");
+              setNewNumber("");
+            });
+        }
       }
     } else if (existingnumbers) {
       alert(`${newNumber} is already added to phonebook`);
@@ -55,7 +77,9 @@ const App = () => {
       phoneService
         .deleteNumber(id)
         .then((deletedContact) => {
-          const updatenumbers = persons.filter((person) => person.id !== deletedContact.id);
+          const updatenumbers = persons.filter(
+            (person) => person.id !== deletedContact.id
+          );
           setPersons(updatenumbers);
           setNewFilter(updatenumbers);
         })
