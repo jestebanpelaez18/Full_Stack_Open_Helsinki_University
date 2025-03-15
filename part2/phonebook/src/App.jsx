@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Persons from "./components/Persons";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
+import Notification from "./components/Notification";
 import phoneService from "./services/Phone";
 
 const App = () => {
@@ -10,6 +11,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [searchItem, setSearchItem] = useState("");
   const [filtering, setNewFilter] = useState([]);
+  const [notificationMessage, setNotificationMessage] = useState(null);
 
   useEffect(() => {
     phoneService.getAll().then((currentNumbers) => {
@@ -47,6 +49,13 @@ const App = () => {
               );
               setNewName("");
               setNewNumber("");
+              setNotificationMessage(`Updated ${newName} number`);
+              setTimeout(() => {
+                setNotificationMessage(null);
+              }, 3000);
+            })
+            .catch((error) => {
+              alert("Fail during the post");
             });
         }
       }
@@ -64,6 +73,10 @@ const App = () => {
           setNewFilter(filtering.concat(returnedContact));
           setNewName("");
           setNewNumber("");
+          setNotificationMessage(`Added ${newName}`);
+          setTimeout(() => {
+            setNotificationMessage(null);
+          }, 3000);
         })
         .catch((error) => {
           alert("Fail during the post");
@@ -74,6 +87,10 @@ const App = () => {
   const deleteNumbers = (id) => {
     const person = persons.find((p) => p.id === id);
     if (window.confirm(`Delete '${person.name}'`)) {
+      setNotificationMessage(`Deleted ${person.name}`);
+      setTimeout(() => {
+        setNotificationMessage(null);
+      }, 3000);
       phoneService
         .deleteNumber(id)
         .then((deletedContact) => {
@@ -110,6 +127,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notificationMessage}></Notification>
       <Filter handle={handleFiltering} item={searchItem}></Filter>
       <h3>add a new</h3>
       <PersonForm
