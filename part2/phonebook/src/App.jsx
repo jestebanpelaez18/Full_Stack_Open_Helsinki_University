@@ -11,8 +11,10 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [searchItem, setSearchItem] = useState("");
   const [filtering, setNewFilter] = useState([]);
-  const [notificationMessage, setNotificationMessage] = useState(null);
-
+  const [notificationMessage, setNotificationMessage] = useState({
+    message: null,
+    color: "green",
+  });
   useEffect(() => {
     phoneService.getAll().then((currentNumbers) => {
       setPersons(currentNumbers);
@@ -49,13 +51,24 @@ const App = () => {
               );
               setNewName("");
               setNewNumber("");
-              setNotificationMessage(`Updated ${newName} number`);
+              setNotificationMessage({
+                message: `Updated ${newName} number`,
+                color: "green",
+              });
               setTimeout(() => {
-                setNotificationMessage(null);
+                setNotificationMessage({ message: null });
               }, 3000);
             })
             .catch((error) => {
-              alert("Fail during the post");
+              setNotificationMessage({
+                message: `${newName} was already removed from the server`,
+                color: "red",
+              });
+              setTimeout(() => {
+                setNotificationMessage({ message: null });
+              }, 3000);
+              setNewName("");
+              setNewNumber("");
             });
         }
       }
@@ -73,9 +86,12 @@ const App = () => {
           setNewFilter(filtering.concat(returnedContact));
           setNewName("");
           setNewNumber("");
-          setNotificationMessage(`Added ${newName}`);
+          setNotificationMessage({
+            message: `Added ${newName}`,
+            color: "green",
+          });
           setTimeout(() => {
-            setNotificationMessage(null);
+            setNotificationMessage({ message: null });
           }, 3000);
         })
         .catch((error) => {
@@ -87,15 +103,11 @@ const App = () => {
   const deleteNumbers = (id) => {
     const person = persons.find((p) => p.id === id);
     if (window.confirm(`Delete '${person.name}'`)) {
-      setNotificationMessage(`Deleted ${person.name}`);
-      setTimeout(() => {
-        setNotificationMessage(null);
-      }, 3000);
       phoneService
-        .deleteNumber(id)
-        .then((deletedContact) => {
-          const updatenumbers = persons.filter(
-            (person) => person.id !== deletedContact.id
+      .deleteNumber(id)
+      .then((deletedContact) => {
+        const updatenumbers = persons.filter(
+          (person) => person.id !== deletedContact.id
           );
           setPersons(updatenumbers);
           setNewFilter(updatenumbers);
@@ -127,7 +139,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={notificationMessage}></Notification>
+      <Notification notification={notificationMessage}></Notification>
       <Filter handle={handleFiltering} item={searchItem}></Filter>
       <h3>add a new</h3>
       <PersonForm
